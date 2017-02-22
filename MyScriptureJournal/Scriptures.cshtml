@@ -1,0 +1,69 @@
+﻿@{
+    var db = Database.Open("Scriptures");
+    var scriptureData = db.Query("SELECT * FROM Scriptures");
+
+
+    if (!Request.QueryString["filter"].IsEmpty())
+    {
+        var filterQuery = "SELECT * FROM Scriptures WHERE Book=@0 OR Notes=@0";
+        var filterValue = Request.QueryString["filter"];
+        scriptureData = db.Query(filterQuery, filterValue);
+    } else
+    {
+        scriptureData = db.Query("SELECT * FROM Scriptures");
+    }
+
+    var scriptureGrid = new WebGrid(source: scriptureData, rowsPerPage: 5);
+}
+
+<!doctype html>
+<html class="no-js" lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>My Scripture Journal</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="stylesheet" href="~/assets/css/normalize.css">
+        <link rel="stylesheet" href="~/assets/css/bootstrap.css">
+        <link rel="stylesheet" href="~/assets/css/bootstrap-theme.css">
+        <link rel="stylesheet" href="~/assets/css/main.css">
+        <script src="~/assets/js/vendor/modernizr-2.8.3.min.js"></script>
+    </head>
+    <body>
+        <main role="main">
+            <header>
+                <h1>My Scripture Journal</h1>
+                <a class="btn btn-primary" href="~/new">Add a New Scripture</a>
+            </header>
+            
+            <article class="content">
+                <form method="get" class="search">
+                    <label>
+                        <input type="search" name="filter" value="@Request.QueryString["search"]" placeholder="Search books or notes..."/>
+                    </label>
+                </form>
+
+                @scriptureGrid.GetHtml(
+                    tableStyle: "table table-bordered table-striped",
+                    columns: scriptureGrid.Columns(
+                        scriptureGrid.Column("ID", canSort: false),
+                        scriptureGrid.Column("Date", format: @<text>@item.Date.ToString("MM/dd/yy")</text>),
+                        scriptureGrid.Column("Book"),
+                        scriptureGrid.Column("Chapter", canSort: false),
+                        scriptureGrid.Column("Verse", canSort: false),
+                        scriptureGrid.Column("Notes", canSort: false),
+                        scriptureGrid.Column(format: @<a class="btn btn-default btn-small" href="~/edit/@item.Id"><i class="glyphicon glyphicon-pencil"></i>Edit</a>),
+                        scriptureGrid.Column(format: @<a class="btn btn-default btn-small" href="~/delete/@item.Id"><i class="glyphicon glyphicon-remove"></i>Delete</a>)
+                    )
+                )
+            </article>
+        </main>
+		
+        <script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
+        <script>window.jQuery || document.write('<script src="~/assets/js/vendor/jquery.min.js"><\/script>')</script>
+        <script src="~/assets/js/vendor/bootstrap.min.js"></script>
+        <script src="~/assets/js/main.js"></script>
+    </body>
+</html>

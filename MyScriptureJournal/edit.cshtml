@@ -1,0 +1,101 @@
+﻿@{
+
+    Validation.RequireField("book", "You must add a book from the Scriptures");
+    Validation.RequireField("chapter", "You must add a chapter");
+    Validation.RequireField("verse", "You must add a verse");
+    Validation.RequireField("notes", "You must add a note");
+
+    var book = "";
+    var chapter = "";
+    var verse = "";
+    var notes = "";
+
+    var id = UrlData[0];
+    if (id.IsEmpty())
+    {
+        Response.Redirect("~/Scriptures");
+    }
+
+    var db = Database.Open("Scriptures");
+
+    if (IsPost && Validation.IsValid())
+    {
+        var queryString = "UPDATE Scriptures SET Book=@0, Chapter=@1, Verse=@2, Notes=@3 WHERE Id=@4";
+
+        book = Request["Book"];
+        chapter = Request["Chapter"];
+        verse = Request["Verse"];
+        notes = Request["Notes"];
+
+        db.Execute(queryString, book, chapter, verse, notes, id);
+        Response.Redirect(Href("~/Scriptures"));
+    } else
+    {
+        var queryString = "SELECT * FROM Scriptures WHERE Id=@0";
+        var row = db.QuerySingle(queryString, id);
+
+        book = row.Book;
+        chapter = row.Chapter;
+        verse = row.Chapter;
+        notes = row.Notes;
+    }
+}
+
+<!doctype html>
+<html class="no-js" lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>Edit @book @chapter:@verse | My Scripture Journal</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="~/assets/css/normalize.css">
+    <link rel="stylesheet" href="~/assets/css/bootstrap.css">
+    <link rel="stylesheet" href="~/assets/css/bootstrap-theme.css">
+    <link rel="stylesheet" href="~/assets/css/main.css">
+    <script src="~/assets/js/vendor/modernizr-2.8.3.min.js"></script>
+</head>
+<body>
+    <main role="main">
+        <header>
+            <h1>Edit @book @chapter:@verse</h1>
+        </header>
+
+        <article class="content">
+            @Html.ValidationSummary()
+
+            <form id="new-entry" method="post">
+                <label>
+                    Book:
+                    <input type="text" name="book" value="@book" />
+                </label>
+
+                <label>
+                    Chapter:
+                    <input type="text" name="chapter" value="@chapter" />
+                </label>
+
+                <label>
+                    Verse:
+                    <input type="text" name="verse" value="@verse" />
+                </label>
+
+                <label>
+                    Notes:
+                    <textarea type="text" name="notes">@notes</textarea>
+                </label>
+
+                <div class="button-group">
+                    <a href="~/Scriptures" class="btn btn-default">Cancel</a>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </form>
+        </article>
+    </main>
+
+    <script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
+    <script>window.jQuery || document.write('<script src="~/assets/js/vendor/jquery.min.js"><\/script>')</script>
+    <script src="~/assets/js/vendor/bootstrap.min.js"></script>
+    <script src="~/assets/js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,46 @@
+main {
+    margin: 5% auto;
+    padding: 0 5%;
+    max-width: 1240px;
+}
+header {
+    border-bottom: 1px solid #ccc;
+    display: block;
+    margin-bottom: 20px;
+    position: relative;
+}
+header .btn {
+    position: absolute;
+        bottom: 10px;
+        right: 0;
+}
+
+.table .glyphicon {
+    margin-right: 5px;
+    position: relative;
+    top: 2px;
+}
+
+form {
+    margin: 0 auto;
+    max-width: 600px;
+}
+
+form label {
+    display: block;
+    margin-bottom: 20px;
+}
+
+form input,
+form textarea {
+    display: block;
+    width: 100%;
+}
+
+.button-group .btn-default {
+    float: left;
+}
+.button-group .btn-primary,
+.button-group .btn-danger {
+    float: right;
+}
